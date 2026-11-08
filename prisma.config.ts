@@ -9,6 +9,10 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // Migrations need a direct (non-pooled) connection: Neon's pooler doesn't
+    // support the session-level advisory lock `migrate deploy` takes, and
+    // times out trying. Runtime queries still go through DATABASE_URL (pooled)
+    // via the adapter in src/lib/db.ts.
+    url: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
   },
 });
