@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Item, PriceEntry } from "@/generated/prisma/client";
-import { tapeColorFor, rotationFor } from "@/lib/visual";
+import { tapeColorFor, stickerColorFor, rotationFor } from "@/lib/visual";
 import { formatPrice, formatDateShort, hostnameOf } from "@/lib/format";
 import { PhotoPlaceholderIcon } from "./icons";
 
@@ -22,7 +22,7 @@ export function ItemCard({ item }: { item: ItemWithPrices }) {
       <div className="tape" style={{ background: tapeColorFor(item.category) }}>
         {item.category}
       </div>
-      <div className="card-photo">
+      <div className="card-photo" style={item.imageUrl ? { background: "var(--paper-card)" } : undefined}>
         {item.imageUrl ? (
           <Image
             src={item.imageUrl}
@@ -41,14 +41,6 @@ export function ItemCard({ item }: { item: ItemWithPrices }) {
             <br />✓
           </div>
         )}
-        {latest && (
-          <div className="price-badge">
-            <div className="price-now">R$ {formatPrice(latest.price.toString())}</div>
-            {previous && Number(previous.price.toString()) !== Number(latest.price.toString()) && (
-              <div className="price-was">antes R$ {formatPrice(previous.price.toString())}</div>
-            )}
-          </div>
-        )}
       </div>
       <div className="card-caption">
         <div className="card-name">{item.name}</div>
@@ -56,6 +48,14 @@ export function ItemCard({ item }: { item: ItemWithPrices }) {
           {[sourceLabel, formatDateShort(item.createdAt)].filter(Boolean).join(" · ")}
         </div>
       </div>
+      {latest && (
+        <div className="price-badge" style={{ background: stickerColorFor(item.category) }}>
+          <div className="price-now">R$ {formatPrice(latest.price.toString())}</div>
+          {previous && Number(previous.price.toString()) !== Number(latest.price.toString()) && (
+            <div className="price-was">antes R$ {formatPrice(previous.price.toString())}</div>
+          )}
+        </div>
+      )}
     </Link>
   );
 }

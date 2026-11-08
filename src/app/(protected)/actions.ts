@@ -41,15 +41,77 @@ export async function createItem(formData: FormData): Promise<void> {
       link: link || null,
       imageUrl: imageUrl || null,
       category: category || "outros",
-      note: note || null,
       priceEntries: priceValue
         ? { create: [{ price: priceValue, store: store || null }] }
         : undefined,
+      notes: note ? { create: [{ text: note }] } : undefined,
     },
   });
 
   revalidatePath("/");
   redirect("/");
+}
+
+const updateItemSchema = z.object({
+  name: z.string().trim().min(1, "o nome é obrigatório"),
+  link: z.string().trim().optional(),
+  imageUrl: z.string().trim().optional(),
+  category: z.string().trim().min(1).optional(),
+});
+
+export async function updateItem(itemId: string, formData: FormData): Promise<void> {
+  const parsed = updateItemSchema.safeParse({
+    name: formData.get("name"),
+    link: formData.get("link"),
+    imageUrl: formData.get("imageUrl"),
+    category: formData.get("category"),
+  });
+
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message ?? "dados inválidos");
+  }
+
+  const { name, link, imageUrl, category } = parsed.data;
+
+  await prisma.item.update({
+    where: { id: itemId },
+    data: {
+      name,
+      link: link || null,
+      imageUrl: imageUrl || null,
+      category: category || "outros",
+    },
+  });
+
+  revalidatePath(`/item/${itemId}`);
+  revalidatePath("/");
+  redirect(`/item/${itemId}`);
+}
+
+export async function addNote(itemId: string, formData: FormData): Promise<void> {
+  const text = formData.get("text")?.toString().trim();
+  if (!text) {
+    throw new Error("a nota não pode ficar vazia");
+  }
+
+  await prisma.note.create({ data: { itemId, text } });
+
+  revalidatePath(`/item/${itemId}`);
+}
+
+export async function updateNote(noteId: string, formData: FormData): Promise<void> {
+  const text = formData.get("text")?.toString().trim();
+  if (!text) {
+    throw new Error("a nota não pode ficar vazia");
+  }
+
+  const note = await prisma.note.update({ where: { id: noteId }, data: { text } });
+  revalidatePath(`/item/${note.itemId}`);
+}
+
+export async function deleteNote(noteId: string): Promise<void> {
+  const note = await prisma.note.delete({ where: { id: noteId } });
+  revalidatePath(`/item/${note.itemId}`);
 }
 
 export async function addPriceEntry(itemId: string, formData: FormData): Promise<void> {

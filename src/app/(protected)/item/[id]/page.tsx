@@ -2,10 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { tapeColorFor, rotationFor, STATUS_LABEL } from "@/lib/visual";
+import { tapeColorFor, stickerColorFor, rotationFor, STATUS_LABEL, STATUS_CLASS } from "@/lib/visual";
 import { formatPrice, formatDateShort, formatDateLong, hostnameOf } from "@/lib/format";
 import { PhotoPlaceholderIcon } from "@/components/icons";
-import { addPriceEntry, updateStatus, deleteItem } from "../../actions";
+import { addPriceEntry, updateStatus, deleteItem, addNote, updateNote, deleteNote } from "../../actions";
 import { ItemStatus } from "@/generated/prisma/client";
 
 export default async function ItemDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -13,7 +13,10 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
 
   const item = await prisma.item.findUnique({
     where: { id },
-    include: { priceEntries: { orderBy: { researchedAt: "desc" } } },
+    include: {
+      priceEntries: { orderBy: { researchedAt: "desc" } },
+      notes: { orderBy: { createdAt: "desc" } },
+    },
   });
 
   if (!item) {
@@ -31,6 +34,7 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
   const markWanted = updateStatus.bind(null, item.id, ItemStatus.QUERO);
   const markGaveUp = updateStatus.bind(null, item.id, ItemStatus.DESISTI);
   const removeItem = deleteItem.bind(null, item.id);
+  const addNoteWithId = addNote.bind(null, item.id);
 
   return (
     <div className="page detail-page">
@@ -38,13 +42,13 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
         ← voltar pra vitrine
       </Link>
 
-      <div className="detail-layout">
+      <div className="detail-top">
         <div className="detail-photo-col">
           <div className="card" style={{ transform: rotationFor(item.id) }}>
             <div className="tape" style={{ background: tapeColorFor(item.category) }}>
               {item.category}
             </div>
-            <div className="card-photo">
+            <div className="card-photo" style={item.imageUrl ? { background: "var(--paper-card)" } : undefined}>
               {item.imageUrl ? (
                 <Image src={item.imageUrl} alt={item.name} fill sizes="(max-width: 560px) 90vw, 440px" />
               ) : (
@@ -58,14 +62,6 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
                   <br />✓
                 </div>
               )}
-              {prices[0] && (
-                <div className="price-badge">
-                  <div className="price-now">R$ {formatPrice(prices[0].price.toString())}</div>
-                  {prices[1] && Number(prices[1].price.toString()) !== Number(prices[0].price.toString()) && (
-                    <div className="price-was">antes R$ {formatPrice(prices[1].price.toString())}</div>
-                  )}
-                </div>
-              )}
             </div>
             <div className="card-caption">
               <div className="card-name" style={{ fontSize: 20 }}>
@@ -75,16 +71,44 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
                 {[sourceLabel, formatDateShort(item.createdAt)].filter(Boolean).join(" · ")}
               </div>
             </div>
+            {prices[0] && (
+              <div className="price-badge" style={{ background: stickerColorFor(item.category) }}>
+                <div className="price-now">R$ {formatPrice(prices[0].price.toString())}</div>
+                {prices[1] && Number(prices[1].price.toString()) !== Number(prices[0].price.toString()) && (
+                  <div className="price-was">antes R$ {formatPrice(prices[1].price.toString())}</div>
+                )}
+              </div>
+            )}
           </div>
-
-          {item.note && (
-            <div className="sticky-note" style={{ transform: "rotate(-3deg)" }}>
-              {item.note}
-            </div>
-          )}
         </div>
 
-        <div className="detail-info-col">
+        <div className="detail-notes-col">
+          <h2 className="notes-heading">notas</h2>
+          {item.notes.map((n) => {
+            const updateNoteWithId = updateNote.bind(null, n.id);
+            const deleteNoteWithId = deleteNote.bind(null, n.id);
+            return (
+              <form key={n.id} action={updateNoteWithId} className="note-card">
+                <textarea name="text" rows={2} defaultValue={n.text} />
+                <div className="note-actions">
+                  <button type="submit" formAction={deleteNoteWithId}>
+                    excluir
+                  </button>
+                  <button type="submit">salvar</button>
+                </div>
+              </form>
+            );
+          })}
+          <form action={addNoteWithId} className="note-card note-card-new">
+            <textarea name="text" rows={2} placeholder="um lembrete novo..." required />
+            <div className="note-actions">
+              <button type="submit">adicionar nota ✚</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="detail-info">
           <div className="info-tape" style={{ background: tapeColorFor(item.category) }}>
             {item.category}
           </div>
@@ -94,12 +118,15 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
           </div>
 
           <div className="actions-row">
-            <span className="status-pill">{STATUS_LABEL[item.status]}</span>
+            <span className={`status-pill ${STATUS_CLASS[item.status]}`}>{STATUS_LABEL[item.status]}</span>
             {item.link && (
               <a className="btn-ghost" href={item.link} target="_blank" rel="noopener noreferrer">
                 ver na loja ↗
               </a>
             )}
+            <Link href={`/item/${item.id}/editar`} className="btn-ghost">
+              editar ✎
+            </Link>
           </div>
 
           <div className="divider" />
@@ -166,7 +193,6 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
               </button>
             </form>
           </div>
-        </div>
       </div>
     </div>
   );

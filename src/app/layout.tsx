@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Caveat, Inter } from "next/font/google";
+import { Fraunces, Caveat, Inter, Space_Mono } from "next/font/google";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -18,6 +18,12 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-space-mono",
+});
+
 export const metadata: Metadata = {
   title: "meus desejos",
   description: "lista de desejos da Lori",
@@ -25,8 +31,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${fraunces.variable} ${caveat.variable} ${inter.variable}`}>
-      <body>{children}</body>
+    <html
+      lang="pt-BR"
+      className={`${fraunces.variable} ${caveat.variable} ${inter.variable} ${spaceMono.variable}`}
+    >
+      <body>
+        <div className="shell">{children}</div>
+      </body>
     </html>
   );
 }

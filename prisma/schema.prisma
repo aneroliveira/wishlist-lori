@@ -23,11 +23,11 @@ model Item {
   imageUrl     String?
   category     String
   status       ItemStatus   @default(QUERO)
-  note         String?      @db.Text
   purchasedAt  DateTime?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   priceEntries PriceEntry[]
+  notes        Note[]
 
   @@index([status])
   @@index([category])
@@ -41,6 +41,18 @@ model PriceEntry {
   price        Decimal  @db.Decimal(10, 2)
   store        String?
   researchedAt DateTime @default(now())
+
+  @@index([itemId])
+}
+
+// Várias notas por item, cada uma editável e excluível na tela de detalhe.
+model Note {
+  id        String   @id @default(cuid())
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  text      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([itemId])
 }
