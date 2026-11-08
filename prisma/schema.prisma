@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ItemStatus {
+  QUERO
+  COMPRADO
+  DESISTI
+}
+
+model Item {
+  id           String       @id @default(cuid())
+  name         String
+  link         String?
+  imageUrl     String?
+  category     String
+  status       ItemStatus   @default(QUERO)
+  note         String?      @db.Text
+  purchasedAt  DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  priceEntries PriceEntry[]
+
+  @@index([status])
+  @@index([category])
+}
+
+// Um registro por vez que o preço foi pesquisado — histórico, nunca sobrescrito.
+model PriceEntry {
+  id           String   @id @default(cuid())
+  itemId       String
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  price        Decimal  @db.Decimal(10, 2)
+  store        String?
+  researchedAt DateTime @default(now())
+
+  @@index([itemId])
+}
