@@ -7,7 +7,7 @@ export default function NovoDesejoPage() {
   return (
     <div className="add-stage">
       <div className="add-backdrop" aria-hidden="true">
-        <h1>meus desejos</h1>
+        <h1>Listinha de desejos da Lori</h1>
         <div className="ghost-row">
           <div className="ghost-card" style={{ background: "linear-gradient(135deg,#fbefe9,#f3d9c8)" }} />
           <div className="ghost-card" style={{ background: "linear-gradient(135deg,#eaf2f4,#d3e3e8)" }} />

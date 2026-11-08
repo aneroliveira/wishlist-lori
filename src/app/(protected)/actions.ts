@@ -49,7 +49,7 @@ export async function createItem(formData: FormData): Promise<void> {
   });
 
   revalidatePath("/");
-  redirect("/");
+  redirect("/?toast=added");
 }
 
 const updateItemSchema = z.object({
@@ -85,7 +85,7 @@ export async function updateItem(itemId: string, formData: FormData): Promise<vo
 
   revalidatePath(`/item/${itemId}`);
   revalidatePath("/");
-  redirect(`/item/${itemId}`);
+  redirect(`/item/${itemId}?toast=updated`);
 }
 
 export async function addNote(itemId: string, formData: FormData): Promise<void> {
@@ -129,6 +129,12 @@ export async function addPriceEntry(itemId: string, formData: FormData): Promise
   revalidatePath("/");
 }
 
+const STATUS_TOAST: Record<ItemStatus, string> = {
+  [ItemStatus.COMPRADO]: "purchased",
+  [ItemStatus.DESISTI]: "gaveup",
+  [ItemStatus.QUERO]: "wanted",
+};
+
 export async function updateStatus(itemId: string, status: ItemStatus): Promise<void> {
   await prisma.item.update({
     where: { id: itemId },
@@ -140,10 +146,11 @@ export async function updateStatus(itemId: string, status: ItemStatus): Promise<
 
   revalidatePath(`/item/${itemId}`);
   revalidatePath("/");
+  redirect(`/item/${itemId}?toast=${STATUS_TOAST[status]}`);
 }
 
 export async function deleteItem(itemId: string): Promise<void> {
   await prisma.item.delete({ where: { id: itemId } });
   revalidatePath("/");
-  redirect("/");
+  redirect("/?toast=deleted");
 }

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Fraunces, Caveat, Inter, Space_Mono } from "next/font/google";
+import { Toast } from "@/components/toast";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -36,7 +38,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${fraunces.variable} ${caveat.variable} ${inter.variable} ${spaceMono.variable}`}
     >
       <body>
-        <div className="shell">{children}</div>
+        <div className="shell">
+          {children}
+          <Suspense fallback={null}>
+            <Toast />
+          </Suspense>
+        </div>
       </body>
     </html>
   );

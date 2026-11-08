@@ -73,6 +73,18 @@ body::before {
   }
 }
 
+/* subtle doodle pattern (hearts, sparkles, tags) layered over the blobs */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cpath d='M22 28c0-3 2.5-5.5 5.5-5.5 2.2 0 4 1.2 4.5 3.2.5-2 2.3-3.2 4.5-3.2 3 0 5.5 2.5 5.5 5.5 0 7-10 13-10 13s-10-6-10-13z' fill='none' stroke='white' stroke-width='1.6'/%3E%3Cpath d='M108 14l2.4 7 7.6 2-7.6 2-2.4 7-2.4-7-7.6-2 7.6-2z' fill='none' stroke='white' stroke-width='1.3'/%3E%3Cpath d='M55 95h25l3 22H52z' fill='none' stroke='white' stroke-width='1.3'/%3E%3Ccircle cx='128' cy='100' r='3' fill='white'/%3E%3Ccircle cx='16' cy='120' r='2.2' fill='white'/%3E%3Ccircle cx='70' cy='18' r='2' fill='white'/%3E%3C/svg%3E");
+  background-size: 150px 150px;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   body::before {
     animation: none;
@@ -141,7 +153,7 @@ h2 {
 
 @media (min-width: 900px) {
   .shell {
-    max-width: 860px;
+    max-width: 880px;
     box-shadow: 0 0 110px rgba(43, 30, 61, 0.22);
   }
 }
@@ -230,6 +242,12 @@ h2 {
   font-size: 13.5px;
   font-weight: 500;
   color: var(--ink-soft);
+  display: inline-block;
+  transition: transform 0.1s ease;
+}
+
+.chip:active {
+  transform: scale(0.93);
 }
 
 .chip-active {
@@ -256,6 +274,12 @@ h2 {
   font-size: 13px;
   font-weight: 600;
   color: var(--ink-soft);
+  display: inline-block;
+  transition: transform 0.1s ease;
+}
+
+.seg:active {
+  transform: scale(0.9);
 }
 
 .seg-active {
@@ -446,7 +470,12 @@ a.card:hover {
   justify-content: center;
   box-shadow: 0 14px 30px rgba(194, 30, 114, 0.45);
   transform: rotate(-8deg);
+  transition: transform 0.12s ease, background 0.12s ease;
   z-index: 20;
+}
+
+.fab:active {
+  transform: rotate(0deg) scale(0.9) !important;
 }
 
 .fab:hover {
@@ -684,10 +713,15 @@ a.card:hover {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  transition: transform 0.1s ease, background 0.1s ease;
 }
 
 .btn-primary:hover {
   background: var(--coral-darker);
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
 }
 
 .btn-ghost {
@@ -703,10 +737,15 @@ a.card:hover {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.1s ease;
 }
 
 .btn-ghost:hover {
   border-color: var(--ink-soft);
+}
+
+.btn-ghost:active {
+  transform: scale(0.95);
 }
 
 .price-form {
@@ -764,6 +803,16 @@ a.card:hover {
   position: absolute;
   inset: 0;
   background: rgba(43, 30, 61, 0.38);
+  animation: scrimIn 0.18s ease-out;
+}
+
+@keyframes scrimIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .add-card {
@@ -775,6 +824,25 @@ a.card:hover {
   width: min(480px, 100%);
   box-shadow: 0 36px 70px rgba(43, 30, 61, 0.4);
   transform: rotate(-0.6deg);
+  animation: cardIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: rotate(-0.6deg) scale(0.92) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-0.6deg) scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrim,
+  .add-card {
+    animation: none;
+  }
 }
 
 .add-card-body {
@@ -901,4 +969,40 @@ a.card:hover {
   font-size: 30px;
   font-style: italic;
   font-weight: 600;
+}
+
+/* ---------- toast ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  transform: translate(-50%, 16px);
+  background: var(--ink);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 14px 30px rgba(43, 30, 61, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 50;
+  white-space: nowrap;
+  max-width: calc(100% - 40px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toast-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: opacity 0.25s ease;
+  }
 }

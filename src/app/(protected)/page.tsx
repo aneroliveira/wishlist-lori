@@ -77,7 +77,7 @@ export default async function VitrinePage({
     <div className="page">
       <header className="topbar">
         <div>
-          <h1>meus desejos</h1>
+          <h1>Listinha de desejos da Lori</h1>
           <p className="tagline">tudo que eu quero, num cantinho só ✎</p>
         </div>
         <form className="search-box" action="/" method="get">
