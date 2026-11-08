@@ -25,7 +25,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "meus desejos",
+  title: "Listinha de desejos da Lori",
   description: "lista de desejos da Lori",
 };
 

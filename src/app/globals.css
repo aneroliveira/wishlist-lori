@@ -205,9 +205,20 @@ h2 {
 .filters {
   padding: 22px 56px 0;
   display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.filter-row {
+  display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 10px;
   align-items: center;
+}
+
+.filter-view-options {
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
 }
 
 .chip {
@@ -761,25 +772,28 @@ a.card:hover {
   background: var(--paper-card);
   border: 1px solid var(--line);
   border-radius: 6px;
-  padding: 40px 40px 32px;
   width: min(480px, 100%);
-  max-height: 88vh;
-  overflow-y: auto;
   box-shadow: 0 36px 70px rgba(43, 30, 61, 0.4);
   transform: rotate(-0.6deg);
+}
+
+.add-card-body {
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 40px 40px 32px;
   scrollbar-width: thin;
   scrollbar-color: var(--coral-dark) var(--paper-card);
 }
 
-.add-card::-webkit-scrollbar {
+.add-card-body::-webkit-scrollbar {
   width: 8px;
 }
 
-.add-card::-webkit-scrollbar-track {
+.add-card-body::-webkit-scrollbar-track {
   background: var(--paper-card);
 }
 
-.add-card::-webkit-scrollbar-thumb {
+.add-card-body::-webkit-scrollbar-thumb {
   background: var(--coral-dark);
   border-radius: 999px;
 }

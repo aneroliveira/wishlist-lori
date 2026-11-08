@@ -93,51 +93,55 @@ export default async function VitrinePage({
       </header>
 
       <div className="filters">
-        <Link href={buildHref(sp, { categoria: undefined })} className={`chip${!categoria ? " chip-active" : ""}`}>
-          tudo
-        </Link>
-        {CATEGORIES.map((cat) => (
-          <Link
-            key={cat}
-            href={buildHref(sp, { categoria: cat === categoria ? undefined : cat })}
-            className={`chip${categoria === cat ? " chip-active" : ""}`}
-          >
-            {cat}
+        <div className="filter-row filter-categories">
+          <Link href={buildHref(sp, { categoria: undefined })} className={`chip${!categoria ? " chip-active" : ""}`}>
+            tudo
           </Link>
-        ))}
-
-        <div style={{ flex: "1 1 20px" }} />
-
-        <div className="segmented" role="group" aria-label="status">
-          {STATUS_OPTIONS.map((opt) => (
+          {CATEGORIES.map((cat) => (
             <Link
-              key={opt.value}
-              href={buildHref(sp, { status: opt.value })}
-              className={`seg${status === opt.value ? " seg-active" : ""}`}
+              key={cat}
+              href={buildHref(sp, { categoria: cat === categoria ? undefined : cat })}
+              className={`chip${categoria === cat ? " chip-active" : ""}`}
             >
-              {opt.label}
+              {cat}
             </Link>
           ))}
         </div>
 
-        <form action="/" method="get" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <label htmlFor="ordenar" className="visually-hidden">
-            Ordenar
-          </label>
-          {categoria && <input type="hidden" name="categoria" value={categoria} />}
-          <input type="hidden" name="status" value={status} />
-          {q && <input type="hidden" name="q" value={q} />}
-          <select id="ordenar" name="ordenar" defaultValue={ordenar} className="sort-select">
-            {SORT_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+        <div className="filter-row filter-view-options">
+          <div className="segmented" role="group" aria-label="status">
+            {STATUS_OPTIONS.map((opt) => (
+              <Link
+                key={opt.value}
+                href={buildHref(sp, { status: opt.value })}
+                className={`seg${status === opt.value ? " seg-active" : ""}`}
+              >
                 {opt.label}
-              </option>
+              </Link>
             ))}
-          </select>
-          <button type="submit" className="chip" aria-label="aplicar ordenação">
-            ir
-          </button>
-        </form>
+          </div>
+
+          <div style={{ flex: "1 1 20px" }} />
+
+          <form action="/" method="get" style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <label htmlFor="ordenar" className="visually-hidden">
+              Ordenar
+            </label>
+            {categoria && <input type="hidden" name="categoria" value={categoria} />}
+            <input type="hidden" name="status" value={status} />
+            {q && <input type="hidden" name="q" value={q} />}
+            <select id="ordenar" name="ordenar" defaultValue={ordenar} className="sort-select">
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <button type="submit" className="chip" aria-label="aplicar ordenação">
+              ir
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="wish-grid">

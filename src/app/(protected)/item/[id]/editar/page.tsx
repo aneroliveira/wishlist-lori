@@ -24,47 +24,49 @@ export default async function EditarItemPage({ params }: { params: Promise<{ id:
         <div className="tape" style={{ background: "var(--tape-lilac)", position: "absolute", top: -12, left: 40 }}>
           editar
         </div>
-        <h2>ajustar esse desejo</h2>
-        <p className="tagline">muda o que precisar, histórico e notas ficam como estão</p>
+        <div className="add-card-body">
+          <h2>ajustar esse desejo</h2>
+          <p className="tagline">muda o que precisar, histórico e notas ficam como estão</p>
 
-        <form action={updateWithId}>
-          <div className="field">
-            <label htmlFor="name">nome do item</label>
-            <input id="name" name="name" type="text" required defaultValue={item.name} />
-          </div>
-
-          <div className="field">
-            <label htmlFor="link">link do produto</label>
-            <input id="link" name="link" type="url" placeholder="https://..." defaultValue={item.link ?? ""} />
-          </div>
-
-          <div className="field">
-            <label htmlFor="imageUrl">foto (cole o link da imagem)</label>
-            <input id="imageUrl" name="imageUrl" type="url" placeholder="https://..." defaultValue={item.imageUrl ?? ""} />
-          </div>
-
-          <div className="field-row">
+          <form action={updateWithId}>
             <div className="field">
-              <label htmlFor="category">categoria</label>
-              <select id="category" name="category" defaultValue={item.category}>
-                {categoryOptions.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+              <label htmlFor="name">nome do item</label>
+              <input id="name" name="name" type="text" required defaultValue={item.name} />
             </div>
-          </div>
 
-          <div className="form-actions">
-            <Link href={`/item/${item.id}`} className="btn-ghost">
-              cancelar
-            </Link>
-            <button type="submit" className="btn-primary">
-              salvar alterações
-            </button>
-          </div>
-        </form>
+            <div className="field">
+              <label htmlFor="link">link do produto</label>
+              <input id="link" name="link" type="url" placeholder="https://..." defaultValue={item.link ?? ""} />
+            </div>
+
+            <div className="field">
+              <label htmlFor="imageUrl">foto (cole o link da imagem)</label>
+              <input id="imageUrl" name="imageUrl" type="url" placeholder="https://..." defaultValue={item.imageUrl ?? ""} />
+            </div>
+
+            <div className="field-row">
+              <div className="field">
+                <label htmlFor="category">categoria</label>
+                <select id="category" name="category" defaultValue={item.category}>
+                  {categoryOptions.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-actions">
+              <Link href={`/item/${item.id}`} className="btn-ghost">
+                cancelar
+              </Link>
+              <button type="submit" className="btn-primary">
+                salvar alterações
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
